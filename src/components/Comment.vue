@@ -25,7 +25,6 @@
 
     data() {
       return {
-        // comment:false,
         comment: null,
         comments: [],
         commentsUrl: 'https://jsonplaceholder.typicode.com/comments?postId=',
