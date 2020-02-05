@@ -1,0 +1,126 @@
+@import "mixins";
+@include scrollbars(.3em, lighten($blue, 15%));
+@include max-screen($grid-sm){
+    @include scrollbars(.15em, lighten($blue, 15%));
+}
+html, body {
+    width:100%;
+    overflow-x:hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+#app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+
+h1, h2 {
+    font-weight: normal;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    min-height: 90px;
+    border-bottom: 1px solid $grey;
+    text-align: center;
+    background: $white;
+    @include max-screen($grid-sl){
+        position: relative;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        top: 0;
+        h1{
+            margin:0;
+        }
+    }
+}
+
+main {
+    position: relative;
+    display: flex;
+    height: calc(100vh - 90px);
+    max-width: 1200px;
+    margin-top: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    // overflow: hidden;
+    @include max-screen($grid-sl){
+        height:100%;
+        flex-wrap:wrap;
+        margin-top:0;
+    }
+}
+
+aside {
+    position: relative;
+    flex: 1 0 30%;
+    order: 1;
+    height: 100%;
+    overflow-y: auto;
+    width: 30%;
+    background-color:$grey;
+    padding: 50px 30px;
+    box-sizing: border-box;
+    @include max-screen($grid-sl){
+        flex: 1 0 100%;
+        position: sticky;
+        z-index: 9;
+        top:0;
+        align-items:center;
+        padding:15px;
+        justify-content:center;
+        order: 0;
+        height:auto;
+    }
+}
+.content {
+    padding:0 0 5px 5px;
+    flex: 1 1 70%;
+    background-color:lighten($grey, 10%);
+    order:0;
+    display: flex;
+    flex-wrap:wrap;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    overflow-x:hidden;
+    @include max-screen($grid-sl){
+        flex: 1 0 100%;
+        box-sizing:border-box;
+        padding-left:15px;
+        padding-right:15px;
+        order: 1;
+    }
+}
+.link {
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #2c3e50;
+
+    &--home {
+        text-transform: uppercase;
+        margin-bottom: 30px;
+    }
+
+    &.is-active {
+        color: $blue;
+    }
+}

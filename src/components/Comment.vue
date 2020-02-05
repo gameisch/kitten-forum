@@ -1,9 +1,14 @@
 <template lang="pug">
   .comment(v-if="comment")
-    h1.comment__title {{ comment.name }}
-    p.comment__body {{ comment.body }}
-    p.comment__email {{ comment.email }}
-    p.comment__id {{ comment.id }}
+    .comment__item(v-for="(comment, i) in comments")
+      .comment__img
+        img(src="http://placekitten.com/150/150" alt="" title)
+        span пост id:{{ comment.postId }}
+      .comment__desc
+        .comment__name {{ comment.name }}
+          span промурчал
+        .comment__body  {{ comment.body }}
+    router-link.comment__link(to="/" ) Скрыть комментарии
 </template>
 
 <script>
@@ -20,32 +25,30 @@
 
     data() {
       return {
+        // comment:false,
         comment: null,
+        comments: [],
         commentsUrl: 'https://jsonplaceholder.typicode.com/comments?postId=',
       }
     },
 
     methods: {
-      getComment(cId) {
-        axios(this.commentsUrl + cId)
+      getComment(id) {
+        axios(this.commentsUrl + id)
           .then(response => {
             this.comment = response.data
-            console.log(this.commentsUrl + cId)
-          })
-          .catch( error => {
-            console.log('-----error-------');
-            console.log(error)
+            this.comments = response.data
           })
       }
     },
     
     created() {
-      this.getComment(this.cId);
+      this.getComment(this.id);
     },
 
     watch: {
       '$route'() {
-        this.getComment(this.cId);
+        this.getComment(this.id);
       }
     }
   }

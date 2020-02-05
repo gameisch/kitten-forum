@@ -4,18 +4,20 @@ import Meta from 'vue-meta'
 import App from './App.vue'
 import Post from './components/Post.vue'
 import Comment from './components/Comment.vue'
+import filter from './components/Filter.vue'
 import User from './components/User.vue'
 import Hello from './components/Hello.vue'
 
 Vue.use(Router)
 Vue.use(Meta)
+Vue.use(filter)
 
 const router = new Router({
  routes: [
    {
      path: '/',
      name:'home',
-     component: Hello,
+    //  component: Hello,
    },
    {
      path: '/post/:id',
@@ -24,7 +26,7 @@ const router = new Router({
      props: true,
    },
    {
-    path: '/comment/:id',
+    path: '/comments?postId=:id',
     name:'comment',
     component: Comment,
     props: true,

@@ -4,143 +4,127 @@
       h1 Форум котиков
     main
       aside.sidebar
-        //- router-link(
-          v-for="post in posts" 
-          active-class="is-active" 
-          class="link" 
-          :to="{ name: 'post', params: { id: post.id } }"
-          ) {{post.id}}. {{post.title}}
-        .post__link(
-          v-for="post in posts" 
-          ) {{post.id}}. {{post.title}}
-          //- router-link(v-for="comment in comments" :key="index") {{comment.id}}. {{post.name}}
-
+        .filter
+          .filter__title Фильтры
+          .filter__field
+            .filter__name Имя/Название
+            .filter__input 
+              input(type="text" v-model="queryname")
+          .filter__field
+            .filter__name Контент
+            .filter__input 
+              input(type="text" v-model="querybody")
       .content
-        transition(name='moveInUp' mode="out-in")
-          router-view
+        transition-group(
+          name="staggered-fade"
+          v-bind:css="false"
+          tag="section"
+          v-on:before-enter="beforeEnter"
+          v-on:enter="enter"
+          v-on:leave="leave")
+          .post__item(
+            v-for="(item, index) in computedList"
+            v-bind:key="(item.title, item.body)"
+            v-bind:data-index="index"
+            ) 
+            .post__img
+              img(src="http://placekitten.com/g/200/200" alt="" title)
+            .post__desc  
+              .post__user user id__{{item.userId}} / post id__{{item.id}}
+              .post__title {{item.title}}
+              .post__body {{item.body}}
+            router-link.comment__link(
+              :to="{ name: 'comment', params: { id: item.id } }"
+              active-class='active'
+              ) Октрыть комментарии (к посту - {{item.id}})
+        #router
+          transition(name='moveInUp' mode='out-in')
+            router-view
+        
 </template>
 
 <script>
   import axios from 'axios'
+  import Filtr from './components/Filter.vue'
+  import Velocity from 'velocity-animate'
 
   export default {
-    component: Comment,
+    components: {Filtr},
     data () {
       return {
+        comments: [],
+        commentsUrl: 'https://jsonplaceholder.typicode.com/comments/',
         posts: [],
         endpoint: 'https://jsonplaceholder.typicode.com/posts/',
-        comment: [],
-        commentsUrl: 'https://jsonplaceholder.typicode.com/comments?postId=',
+        users: [],
+        usersUrl: 'https://jsonplaceholder.typicode.com/users/',
+        querybody: '',
+        queryname: '',
       }
     },
-
+    computed: {
+      computedList: function () {
+        var vm = this
+        return this.posts.filter(function (item) {
+          return item.title.toLowerCase().indexOf(vm.queryname.toLowerCase()) !== -1;
+          return item.body.toLowerCase().indexOf(vm.querybody.toLowerCase()) !== -1
+        })
+      }
+    },
     methods: {
-      getAllPosts() {
+      getAllPosts () {
         axios.get(this.endpoint)
           .then(response => {
-            this.posts = response.data;
-          })
-          .catch(error => {
-            console.log('-----error-------');
-            console.log(error);
+            this.posts = response.data
           })
       },
-      getAllComments(cId) {
-        axios(this.commentsUrl + cId)
+      getAllComments () {
+        axios.get(this.commentsUrl)
           .then(response => {
-            this.comment = response.data
+            this.comments = response.data
           })
+      },
+      getAllUsers () {
+        axios.get(this.usersUrl)
+          .then(response => {
+            this.users = response.data
+          })
+      },
+      beforeEnter: function (el) {
+        el.style.opacity = 0
+      },
+      enter: function (el, done) {
+        var delay = el.dataset.index * 20
+        setTimeout(function () {
+          Velocity(
+            el,
+            { opacity: 1 },
+            { complete: done }
+          )
+        }, delay)
+      },
+      leave: function (el, done) {
+        var delay = el.dataset.index * 20
+        setTimeout(function () {
+          Velocity(
+            el,
+            { opacity: 0 },
+            { complete: done }
+          )
+        }, delay)
       }
     },
 
     created() {
-      this.getAllPosts();
-      this.getAllComments();
+      this.getAllPosts()
+      this.getAllComments()
+      this.getAllUsers()
     },
   }
 </script>
-
-<style lang="scss">
-
-  body {
-    margin: 0;
-    padding: 0;
-  }
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-  }
-
-  h1, h2 {
-    font-weight: normal;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    min-height: 90px;
-    border-bottom: 1px solid #42b983;
-    text-align: center;
-    background: #ffffff;
-  }
-
-  main {
-    display: flex;
-    height: calc(100vh - 90px);
-    max-width: 1200px;
-    margin-top: 90px;
-    margin-left: auto;
-    margin-right: auto;
-    overflow: hidden;
-  }
-
-  aside {
-    flex: 1 0 30%;
-    height: 100%;
-    overflow-y: auto;
-    width: 30%;
-    padding: 50px 30px;
-    box-sizing: border-box;
-    border-right: 1px solid #42b983;
-  }
-  .content {
-    flex: 1 1 70%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .post__link {
-    display: block;
-    text-decoration: none;
-    margin-bottom: 10px;
-    color: #2c3e50;
-  }
-  .link {
-    display: block;
-    text-decoration: none;
-    margin-bottom: 10px;
-    color: #2c3e50;
-
-    &--home {
-      text-transform: uppercase;
-      margin-bottom: 30px;
-    }
-
-    &.is-active {
-      color: #42b983;
-    }
-  }
+<style lang='scss'>
+  @import './assets/styles/_app.scss';
+  @import './assets/styles/_filter.scss';
+  @import './assets/styles/_post.scss';
+  @import './assets/styles/_comment.scss';
 </style>

@@ -1,0 +1,31 @@
+@import "mixins";
+.filter {
+    position: sticky;
+    top:100px;
+    max-width: 500px;
+    width:100%;
+    height:auto;
+    margin: 0 auto;
+    margin-top: 10px;
+    & > *{
+        margin-bottom:10px;
+    }
+    &__title{
+        font-weight:bold;
+    }
+    &__input{
+        margin-top:5px;
+    }
+    input{
+        padding:5px;
+        width:100%;
+        box-sizing:border-box;
+        border-radius:2px;
+        border:1px solid darken($grey, 10%);
+    }
+    @include max-screen($grid-sl){
+        position: relative;
+        max-width:290px;
+        top:0;
+    }
+}
